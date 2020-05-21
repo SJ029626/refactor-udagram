@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: backend-user
+  name: backend-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: backend-user
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: backend-user
+    spec:
+      containers:
+        - env:
+            - name: AWS_BUCKET
+              value: $AWS_BUCKET
+            - name: AWS_PROFILE
+              value: $AWS_PROFILE
+            - name: AWS_REGION
+              value: $AWS_REGION
+            - name: JWT_SECRET
+              value: $JWT_SECRET
+            - name: POSTGRESS_DB
+              value: postgres
+            - name: POSTGRESS_HOST
+              value: $POSTGRESS_HOST
+            - name: POSTGRESS_PASSWORD
+              value: $POSTGRESS_PASSWORD
+            - name: POSTGRESS_USERNAME
+              value: $POSTGRESS_USERNAME
+            - name: URL
+              value: http://localhost:8100
+          image: sanyamj/udagram-restuser-api
+          imagePullPolicy: IfNotPresent
+          name: udagram-user-api
+          resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

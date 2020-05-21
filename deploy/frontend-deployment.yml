@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: frontend
+  template:
+    metadata:
+      labels:
+        service: frontend
+    spec:
+      containers:
+        - image: sanyamj/udacity-frontend
+          imagePullPolicy: IfNotPresent
+          name: udagram-frontend
+          ports:
+            - containerPort: 80
+          resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

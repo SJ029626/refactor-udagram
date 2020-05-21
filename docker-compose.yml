@@ -1,0 +1,55 @@
+version: "3"
+services:
+  reverseproxy:
+    build:
+      context: ./reverseproxy
+      dockerfile: Dockerfile
+    image: sanyamj/reverseproxy
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - backend-user
+      - backend-feed
+  backend-user:
+    build:
+      context: ./udagram-user-api
+      dockerfile: Dockerfile
+    container_name: udagram-restuser-api
+    image: sanyamj/udagram-restuser-api
+    environment:
+      POSTGRESS_USERNAME: $POSTGRESS_USERNAME
+      POSTGRESS_PASSWORD: $POSTGRESS_PASSWORD
+      POSTGRESS_DB: $POSTGRESS_DB
+      POSTGRESS_HOST: $POSTGRESS_HOST
+      AWS_REGION: $AWS_REGION
+      AWS_PROFILE: $AWS_PROFILE
+      AWS_BUCKET: $AWS_BUCKET
+      JWT_SECRET: $JWT_SECRET
+      URL: "http://localhost:8100"
+  backend-feed:
+    build:
+      context: ./udagram-feed-api
+      dockerfile: Dockerfile
+    container_name: udagram-restfeed-api
+    image: sanyamj/udagram-restfeed-api
+    volumes:
+      - $HOME/.aws:/root/.aws
+    environment:
+      POSTGRESS_USERNAME: $POSTGRESS_USERNAME
+      POSTGRESS_PASSWORD: $POSTGRESS_PASSWORD
+      POSTGRESS_DB: $POSTGRESS_DB
+      POSTGRESS_HOST: $POSTGRESS_HOST
+      AWS_REGION: $AWS_REGION
+      AWS_PROFILE: $AWS_PROFILE
+      AWS_BUCKET: $AWS_BUCKET
+      JWT_SECRET: $JWT_SECRET
+      URL: "http://localhost:8100"
+  frontend:
+    build:
+      context: ./udagram-frontend
+      dockerfile: Dockerfile
+    container_name: udacity-frontend
+    image: sanyamj/udacity-frontend
+    ports:
+      - "8100:80"
